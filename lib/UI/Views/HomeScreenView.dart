@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nixwhatsappclone/UI/Shared/Styles.dart';
-import 'package:nixwhatsappclone/UI/Views/CallsScreenView.dart';
-import 'package:nixwhatsappclone/UI/Views/ChatsScreenView.dart';
-import 'package:nixwhatsappclone/UI/Views/StatusScreenView.dart';
+import 'package:nixwhatsappclone/UI/Views/CallsTabView.dart';
+import 'package:nixwhatsappclone/UI/Views/ChatsTabView.dart';
+import 'package:nixwhatsappclone/UI/Views/StatusTabView.dart';
 import 'package:nixwhatsappclone/UI/Widgets/popupMenu.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -40,10 +40,6 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> myTabs = new List<Widget>();
-    myTabs.add(ChatsScreen());
-    myTabs.add(StatusScreen());
-    myTabs.add(CallsScreen());
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -104,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [ChatsScreen(), StatusScreen(), CallsScreen()],
+        children: [ChatsTab(), StatusScreen(), CallsScreen()],
       ),
     );
   }
