@@ -59,9 +59,7 @@ class CallListTile extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Transform.rotate(
-                              angle:isCallIncoming?5.5:2.5,
-                              child: Icon(Icons.keyboard_backspace,color: isCallMissed?Colors.red:green,size: 20,)),
+                          Icon(isCallIncoming?Icons.call_received:Icons.call_made,color: isCallMissed?Colors.red:green,size: 20,),
                           Text(
                             time,
                             style: TextStyle(fontSize: 15, color: Colors.grey),
