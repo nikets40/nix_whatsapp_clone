@@ -6,7 +6,7 @@ import 'package:nixwhatsappclone/UI/Widgets/chatsListTile.dart';
 import 'package:nixwhatsappclone/UI/Widgets/myStatusTile.dart';
 import 'package:nixwhatsappclone/UI/Widgets/statusListTile.dart';
 
-class StatusScreen extends StatelessWidget {
+class StatusTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nixwhatsappclone/UI/Shared/Styles.dart';
-import 'package:nixwhatsappclone/UI/Views/CallsTabView.dart';
-import 'package:nixwhatsappclone/UI/Views/ChatsTabView.dart';
-import 'package:nixwhatsappclone/UI/Views/StatusTabView.dart';
+import 'package:nixwhatsappclone/UI/Tabs/CallsTabView.dart';
+import 'package:nixwhatsappclone/UI/Tabs/ChatsTabView.dart';
+import 'package:nixwhatsappclone/UI/Tabs/StatusTabView.dart';
 import 'package:nixwhatsappclone/UI/Widgets/popupMenu.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,12 +12,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
+  ScrollController _scrollViewController;
   TabController _tabController;
   IconData fabIcon;
 
   @override
   void initState() {
     super.initState();
+    _scrollViewController = new ScrollController();
     fabIcon = Icons.message;
     _tabController = TabController(vsync: this, initialIndex: 0, length: 3);
 //    _tabController.addListener(() {
@@ -39,8 +41,14 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    _scrollViewController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: green,
@@ -50,57 +58,69 @@ class _HomeScreenState extends State<HomeScreen>
         ),
         onPressed: () {},
       ),
-      appBar: AppBar(
-        backgroundColor: primaryColorDark,
-        title: Text('WhatsApp'),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.white,
+      body: NestedScrollView(
+        controller: _scrollViewController,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          //<-- headerSliverBuilder
+          return <Widget>[
+            new SliverAppBar(
+              backgroundColor: primaryColorDark,
+              title: new Text("WhatsApp"),
+              pinned: true,
+              centerTitle: false,
+
+              floating: true,
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {},
+                ),
+                PopUpMenu(),
+              ],
+              //<-- forceElevated to innerBoxIsScrolled
+              bottom: TabBar(
+                indicatorColor: Colors.white,
+                controller: _tabController,
+                tabs: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: Text(
+                      'CHATS',
+                      style: TabBarTextStyle,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: Text(
+                      'STATUS',
+                      style: TabBarTextStyle,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                    ),
+                    child: Text(
+                      'CALLS',
+                      style: TabBarTextStyle,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            onPressed: () {},
-          ),
-          PopUpMenu(),
-        ],
-        bottom: TabBar(
-          indicatorColor: Colors.white,
+          ];
+        },
+        body: new TabBarView(
+          children: <Widget>[ChatsTab(), StatusTab(), CallsTab()],
           controller: _tabController,
-          tabs: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-              ),
-              child: Text(
-                'CHATS',
-                style: TabBarTextStyle,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-              ),
-              child: Text(
-                'STATUS',
-                style: TabBarTextStyle,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10.0,
-              ),
-              child: Text(
-                'CALLS',
-                style: TabBarTextStyle,
-              ),
-            ),
-          ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [ChatsTab(), StatusScreen(), CallsScreen()],
       ),
     );
   }
