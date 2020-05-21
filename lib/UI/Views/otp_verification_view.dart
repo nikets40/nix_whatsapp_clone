@@ -81,6 +81,8 @@ class _OtpVerificationState extends State<OtpVerification> {
                         child: PinCodeTextField(
                           length: 6,
                           obsecureText: false,
+                          textInputType: TextInputType.number,
+                          autoDismissKeyboard: false,
                           backgroundColor: Colors.transparent,
                           animationType: AnimationType.fade,
                           autoDisposeControllers: true,

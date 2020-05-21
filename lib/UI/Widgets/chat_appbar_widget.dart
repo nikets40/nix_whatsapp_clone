@@ -19,7 +19,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage(userImage),
+            backgroundImage: NetworkImage(userImage),
           ),
           SizedBox(
             width: 10,

@@ -28,7 +28,7 @@ class ChatsListTile extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25,
-                backgroundImage: AssetImage(image),
+                backgroundImage: NetworkImage(image),
                 backgroundColor: Colors.transparent,
               ),
               SizedBox(

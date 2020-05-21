@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nixwhatsappclone/UI/Views/mobile_registration_view.dart';
 import 'package:nixwhatsappclone/services/auth_service.dart';
 import 'package:nixwhatsappclone/services/navigation_service.dart';
 
@@ -7,6 +8,9 @@ class PopUpMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return  PopupMenuButton<int>(
       icon: Icon(Icons.more_vert),
+      onSelected: (value){
+        onSelected(value);
+      },
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 1,
@@ -30,14 +34,36 @@ class PopUpMenu extends StatelessWidget {
         ),
         PopupMenuItem(
           value: 6,
-          child: GestureDetector(onTap: (){
-            AuthService.instance.signOut();
+          child: GestureDetector(onTap: ()async{
+            print("LogOut Button Pressed");
+            await AuthService.instance.signOut();
+            print("Logged out");
+
             NavigationService.instance.navigateToWithClearTop("login");
+            NavigationService.instance.navigateToRoute(MaterialPageRoute(builder: (context)=>MobileRegistration()));
 
           },child: Text("Logout")),
         ),
       ],
     );
+  }
+
+  onSelected(int value)async{
+
+    switch (value){
+      case 5: print("settings pressed");
+              break;
+      case 6:
+        print("LogOut Button Pressed");
+        await AuthService.instance.signOut();
+        print("Logged out");
+
+        NavigationService.instance.navigateToWithClearTop("login");
+//        NavigationService.instance.navigateToRoute(MaterialPageRoute(builder: (context)=>MobileRegistration()));
+        break;
+      default: print("default");
+    }
+
   }
 
 }

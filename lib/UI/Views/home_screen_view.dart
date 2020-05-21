@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen>
           fabIcon,
           color: Colors.white,
         ),
-        onPressed: () {},
+        onPressed: fabOnPressed,
       ),
       body: NestedScrollView(
         controller: _scrollViewController,
