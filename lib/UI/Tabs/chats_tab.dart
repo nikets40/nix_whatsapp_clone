@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mock_data/mock_data.dart';
 import 'package:nixwhatsappclone/UI/Widgets/chats_list_tile_widget.dart';
+import 'package:nixwhatsappclone/models/conversation.dart';
+import 'package:nixwhatsappclone/services/db_service.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../Views/chats_screen_view.dart';
 
@@ -61,13 +64,14 @@ class _ChatsScreenState extends State<ChatsTab>
 
   chatsList(user){
     return
-    StreamBuilder<QuerySnapshot> (
-        stream: Firestore.instance.collection("Users").document(user).collection("Conversations").snapshots(),
+    StreamBuilder <List<ConversationSnippet>>(
+        stream: DBService.instance.getUserConversations(user),
         builder: (context, snapshot) {
           if(!snapshot.hasData){
             return Text("loading");
           }
-          var chats = snapshot.data.documents;
+          var chats = snapshot.data;
+          
           return ListView.builder(
             padding: EdgeInsets.only(bottom:100.0,top: 0),
             physics: NeverScrollableScrollPhysics(),
@@ -80,18 +84,21 @@ class _ChatsScreenState extends State<ChatsTab>
                       context,
                       MaterialPageRoute(
                           builder: (context) => ChatsScreenView(
-                            conversationID: chats[index]["conversationID"],
+                            conversationID: chats[index].conversationID,
                             isOnline: true,
-                            userName: chats[index]["name"],
-                            userImage:chats[index]["profilePicture"] ,
+                            userName: chats[index].name,
+                            userImage:chats[index].profilePicture ,
+                            myID: user
                           )));
+                          DBService.instance.resetUnseenCount(chats[index].id);
                 },
                 child: ChatsListTile(
-                  name: chats[index]["name"],
-                  image: chats[index]["profilePicture"],
-                  dateTimeLastMessage: getFormattedDate(chats[index]["timestamp"]),
-                  lastMessage: chats[index]["lastMessage"],
-                  unReadMessages: chats[index]["unseenCount"],
+                  name: chats[index].name,
+                  image: chats[index].profilePicture,
+                  // dateTimeLastMessage: getFormattedDate(chats[index].timestamp),
+                  dateTimeLastMessage: timeago.format(chats[index].timestamp.toDate()),
+                  lastMessage: chats[index].lastMessage,
+                  unReadMessages: chats[index].unseenCount,
                   isChatMuted: random.nextBool(),
                 ),
               );
@@ -102,6 +109,7 @@ class _ChatsScreenState extends State<ChatsTab>
   }
 
   getFormattedDate(time){
+
       return DateFormat('MMM dd HH:mm').format((time as Timestamp).toDate());
   }
 

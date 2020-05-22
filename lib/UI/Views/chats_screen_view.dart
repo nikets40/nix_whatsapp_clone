@@ -2,25 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nixwhatsappclone/UI/Shared/styles.dart';
 import 'package:nixwhatsappclone/UI/Widgets/chat_appbar_widget.dart';
+import 'package:nixwhatsappclone/services/db_service.dart';
+import 'package:toast/toast.dart';
 
-class ChatsScreenView extends StatelessWidget {
+class ChatsScreenView extends StatefulWidget {
   final String userImage;
   final String userName;
   final bool isOnline;
   final String conversationID;
+  final String myID;
 
   ChatsScreenView(
       {@required this.userImage,
       @required this.userName,
       @required this.conversationID,
+      @required this.myID,
       @required this.isOnline});
+
+  @override
+  _ChatsScreenViewState createState() => _ChatsScreenViewState();
+}
+
+class _ChatsScreenViewState extends State<ChatsScreenView> {
+  final TextEditingController controller = TextEditingController();
+
+  Toast showToast;
+  IconData sendIcon = Icons.mic;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ChatAppBar(
-        userName: userName,
-        userImage: userImage,
+        userName: widget.userName,
+        userImage: widget.userImage,
         isOnline: true,
       ),
       body: Container(
@@ -35,12 +49,14 @@ class ChatsScreenView extends StatelessWidget {
               StreamBuilder<DocumentSnapshot>(
                 stream: Firestore.instance
                     .collection("Conversations")
-                    .document(conversationID)
+                    .document(widget.conversationID)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var document = snapshot.data;
                     print(document["messages"].length);
+                    print(document["messages"][0]["senderID"]+" is SenderID");
+                    print(widget.myID+" is myID");
                     return ListView.builder(
                       itemCount: document["messages"].length,
                       itemBuilder: (BuildContext context, int index) {
@@ -48,8 +64,8 @@ class ChatsScreenView extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Align(
                             alignment: document["messages"][index]
-                                        ["senderID"] ==
-                                    document["ownerID"]
+                                        ["senderID"] == widget.myID
+                                    
                                 ? Alignment.centerRight
                                 : Alignment.centerLeft,
                             child: ConstrainedBox(
@@ -58,14 +74,13 @@ class ChatsScreenView extends StatelessWidget {
                               child: Container(
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: document["messages"][index]
-                                            ["senderID"] ==
-                                        document["ownerID"]
-                                    ? chatBackground
-                                    : Colors.white,
+                                    color: document["messages"][index]
+                                                ["senderID"] ==
+                                            widget.myID
+                                        ? chatBackground
+                                        : Colors.white,
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4))),
-                                
                                 child: Text(
                                     document["messages"][index]["message"]),
                               ),
@@ -101,6 +116,15 @@ class ChatsScreenView extends StatelessWidget {
                                 ),
                                 Flexible(
                                   child: new TextField(
+                                    controller: controller,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        if (val == "") {
+                                          sendIcon = Icons.mic;
+                                        } else
+                                          sendIcon = Icons.send;
+                                      });
+                                    },
                                     minLines: 1,
                                     maxLines: 10,
                                     decoration: const InputDecoration.collapsed(
@@ -134,10 +158,13 @@ class ChatsScreenView extends StatelessWidget {
                           backgroundColor: primaryColor,
                           child: IconButton(
                             icon: Icon(
-                              Icons.mic,
+                              controller.text == "" ? Icons.mic : Icons.send,
                               color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              DBService.instance.sendMessage(
+                                  controller.text, widget.conversationID);
+                            },
                           ),
                         )
                       ],
