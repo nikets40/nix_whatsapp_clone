@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:nixwhatsappclone/UI/Shared/styles.dart';
@@ -23,11 +25,14 @@ class ChatsScreenView extends StatefulWidget {
   _ChatsScreenViewState createState() => _ChatsScreenViewState();
 }
 
-class _ChatsScreenViewState extends State<ChatsScreenView> {
+class _ChatsScreenViewState extends State<ChatsScreenView>
+ {
   final TextEditingController controller = TextEditingController();
 
   Toast showToast;
   IconData sendIcon = Icons.mic;
+  ScrollController scrollController = new ScrollController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,55 +48,64 @@ class _ChatsScreenViewState extends State<ChatsScreenView> {
                 image: AssetImage("assets/images/chat_bg.png"),
                 fit: BoxFit.cover)),
         child: SafeArea(
-          child: Stack(
-            fit: StackFit.expand,
+          child: Column(
             children: [
-              StreamBuilder<DocumentSnapshot>(
-                stream: Firestore.instance
-                    .collection("Conversations")
-                    .document(widget.conversationID)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var document = snapshot.data;
-                    print(document["messages"].length);
-                    print(document["messages"][0]["senderID"]+" is SenderID");
-                    print(widget.myID+" is myID");
-                    return ListView.builder(
-                      itemCount: document["messages"].length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: document["messages"][index]
-                                        ["senderID"] == widget.myID
-                                    
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxWidth: screenWidth(context) * 0.8),
-                              child: Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: document["messages"][index]
+              Expanded(
+                child: Container(
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: Firestore.instance
+                        .collection("Conversations")
+                        .document(widget.conversationID)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        Timer(Duration(milliseconds: 50),()=>{
+                        scrollController.jumpTo(scrollController.position.maxScrollExtent)
+                        });
+                        var document = snapshot.data;
+                        var itemCount = document["messages"].length;
+                        return SingleChildScrollView(
+                          controller: scrollController,
+                          child: ListView.builder(
+                              // controller: scrollController,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: itemCount,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Align(
+                                    alignment: document["messages"][index]
                                                 ["senderID"] ==
                                             widget.myID
-                                        ? chatBackground
-                                        : Colors.white,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(4))),
-                                child: Text(
-                                    document["messages"][index]["message"]),
-                              ),
-                            ),
-                          ),
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                          maxWidth: screenWidth(context) * 0.8),
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                            color: document["messages"][index]
+                                                        ["senderID"] ==
+                                                    widget.myID
+                                                ? chatBackground
+                                                : Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(4))),
+                                        child: Text(document["messages"][index]
+                                            ["message"]),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
                         );
-                      },
-                    );
-                  }
-                  return Text("loading");
-                },
+                      }
+                      return Text("loading");
+                    },
+                  ),
+                ),
               ),
               Align(
                   alignment: Alignment.bottomCenter,
@@ -164,6 +178,9 @@ class _ChatsScreenViewState extends State<ChatsScreenView> {
                             onPressed: () {
                               DBService.instance.sendMessage(
                                   controller.text, widget.conversationID);
+                              setState(() {
+                                controller.text = "";
+                              });
                             },
                           ),
                         )
