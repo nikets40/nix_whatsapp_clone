@@ -2,15 +2,8 @@
 
 Whatsapp Clone app
 
-## Getting Started
+WhatsClone app with Exact Same UI and Chat Functionality Please Setup your own Firebase Project with Mobile Login and Firestore to use this app
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Simulator Screen Shot - iPhone 11 Pro Max - 2020-06-02 at 15 09 30](https://user-images.githubusercontent.com/40358714/83505415-62c79580-a4e3-11ea-91dd-819aac32319e.png)
+![Simulator Screen Shot - iPhone 11 Pro Max - 2020-06-02 at 15 09 32](https://user-images.githubusercontent.com/40358714/83505420-63f8c280-a4e3-11ea-8115-911f3fee0dea.png)
+![Simulator Screen Shot - iPhone 11 Pro Max - 2020-06-02 at 15 09 35](https://user-images.githubusercontent.com/40358714/83505422-6529ef80-a4e3-11ea-874d-a2f8001b94c0.png)
