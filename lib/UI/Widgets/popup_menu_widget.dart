@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nixwhatsappclone/UI/Views/mobile_registration_view.dart';
 import 'package:nixwhatsappclone/services/auth_service.dart';
 import 'package:nixwhatsappclone/services/navigation_service.dart';
 
@@ -34,15 +33,7 @@ class PopUpMenu extends StatelessWidget {
         ),
         PopupMenuItem(
           value: 6,
-          child: GestureDetector(onTap: ()async{
-            print("LogOut Button Pressed");
-            await AuthService.instance.signOut();
-            print("Logged out");
-
-            NavigationService.instance.navigateToWithClearTop("login");
-            NavigationService.instance.navigateToRoute(MaterialPageRoute(builder: (context)=>MobileRegistration()));
-
-          },child: Text("Logout")),
+          child: Text("Logout"),
         ),
       ],
     );
