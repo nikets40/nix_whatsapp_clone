@@ -2,7 +2,7 @@
 
 Whatsapp Clone app
 
-WhatsClone app with Exact Same UI and Chat Functionality
+WhatsClone app with Exact Same UI and Chat Functionality (Stories and calling under Development)
 
 Note: Please Setup your own Firebase Project with Mobile Login and Firestore to use this app
 
